@@ -4,6 +4,7 @@ importers:
 
   .:
     specifiers:
+      '@mini-vue3/reactivity': workspace:^1.0.0
       '@types/node': ^18.7.11
       '@typescript-eslint/parser': ^5.34.0
       '@vitest/coverage-c8': ^0.22.1
@@ -14,6 +15,7 @@ importers:
       vite: ^3.0.9
       vitest: ^0.22.1
     devDependencies:
+      '@mini-vue3/reactivity': link:packages/reactivity
       '@types/node': 18.7.11
       '@typescript-eslint/parser': 5.34.0_4rv7y5c6xz3vfxwhbrcxxi73bq
       '@vitest/coverage-c8': 0.22.1_jsdom@20.0.0
@@ -23,6 +25,15 @@ importers:
       typescript: 4.7.4
       vite: 3.0.9
       vitest: 0.22.1_jsdom@20.0.0
+
+  packages/reactivity:
+    specifiers:
+      '@mini-vue3/shared': workspace:^1.0.0
+    dependencies:
+      '@mini-vue3/shared': link:../shared
+
+  packages/shared:
+    specifiers: {}
 
 packages:
 

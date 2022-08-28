@@ -1,0 +1,8 @@
+{
+  "name": "@mini-vue3/shared",
+  "version": "1.0.0",
+  "description": "internal utils shared across @mini-vue3 packages",
+  "main": "index.js",
+  "author": "Young Liang <younggglcy@gmail.com>",
+  "license": "MIT"
+}

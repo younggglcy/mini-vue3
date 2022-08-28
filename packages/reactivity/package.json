@@ -1,0 +1,11 @@
+{
+  "name": "@mini-vue3/reactivity",
+  "version": "1.0.0",
+  "description": "@mini-vue3/reactivity",
+  "main": "index.js",
+  "author": "Young Liang <younggglcy@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@mini-vue3/shared": "workspace:^1.0.0"
+  }
+}

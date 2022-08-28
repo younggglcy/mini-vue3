@@ -19,6 +19,7 @@
     "@types/node": "^18.7.11",
     "@typescript-eslint/parser": "^5.34.0",
     "@vitest/coverage-c8": "^0.22.1",
+    "@mini-vue3/reactivity": "workspace:^1.0.0",
     "eslint": "^8.22.0",
     "jsdom": "^20.0.0",
     "mini-vue3": "workspace:^1.0.0",
