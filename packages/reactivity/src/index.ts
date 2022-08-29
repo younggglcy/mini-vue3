@@ -10,3 +10,4 @@ export {
   trigger,
   ReactiveEffect
 } from './effect'
+export { TrackOpTypes, TriggerOpTypes } from './operations'

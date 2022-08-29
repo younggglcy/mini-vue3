@@ -38,6 +38,7 @@ export function isReactive(value: unknown): boolean {
   return !!(value && (value as Target)[ReactiveFlags.IS_REACTIVE])
 }
 
+/** return the raw object if it's a Proxy  */
 export function toRaw<T>(observed: T): T {
   const raw = observed && (observed as Target)[ReactiveFlags.RAW] as any
   return raw ? toRaw(raw) : observed

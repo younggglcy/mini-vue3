@@ -1,4 +1,6 @@
 import { createDep, Dep } from './dep'
+import { TrackOpTypes, TriggerOpTypes } from './operations'
+import { isArray } from '@mini-vue3/shared'
 
 // The main WeakMap that stores {target -> key -> dep} connections.
 // Conceptually, it's easier to think of a dependency as a Dep class
@@ -17,6 +19,8 @@ export interface ReactiveEffect<T = any> {
 export let activeEffect: ReactiveEffect | undefined
 // stores all effects, which allow nested effects to work
 const effectStack: ReactiveEffect[] = []
+
+export const ITERATE_KEY = Symbol('iterate')
 
 export function isEffect(fn: any): fn is ReactiveEffect {
   return !!fn && fn._isEffect
@@ -70,7 +74,11 @@ function cleanup(effect: ReactiveEffect) {
   }
 }
 
-export function track(target: object, key: unknown) {
+export function track(
+  target: object,
+  type: TrackOpTypes,
+  key: unknown
+) {
   if (activeEffect) {
     let depsMap = targetMap.get(target)
     if (!depsMap) {
@@ -87,14 +95,40 @@ export function track(target: object, key: unknown) {
   }
 }
 
-export function trigger(target: object, key: unknown) {
+export function trigger(
+  target: object,
+  type: TriggerOpTypes,
+  key?: unknown
+) {
   const depsMap = targetMap.get(target)
   if (!depsMap) {
     // never been tracked
     return
   }
-  const effects = depsMap.get(key)
-  if (effects) {
-    [...effects].forEach(effect => effect())
+
+  let deps: (Dep | undefined)[] = []
+
+  // schedule runs for SET | ADD | DELETE
+  if (key !== undefined) {
+    deps.push(depsMap.get(key))
   }
+
+  // also run for iteration key on ADD | DELETE
+  if (type === TriggerOpTypes.ADD || type === TriggerOpTypes.DELETE) {
+    deps.push(depsMap.get(ITERATE_KEY))
+  }
+
+  const effects: ReactiveEffect[] = []
+  for (const dep of deps) {
+    if (dep) {
+      effects.push(...dep)
+    }
+  }
+  triggerEffects(createDep(effects))
+}
+
+export function triggerEffects(dep: Dep | ReactiveEffect[]) {
+  // spread into array for stabilization
+  const effects = isArray(dep) ? dep : [...dep]
+  effects.forEach(effect => effect())
 }
