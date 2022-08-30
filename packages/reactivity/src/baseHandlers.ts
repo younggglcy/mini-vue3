@@ -20,8 +20,6 @@ export const mutableHandlers: ProxyHandler<object> = {
       receiver === reactiveMap.get(target)
     ) {
       return target
-    } else if (key === 'toJSON') { // JSON.stringify()
-      return target
     }
 
     const res = Reflect.get(target, key, receiver)
