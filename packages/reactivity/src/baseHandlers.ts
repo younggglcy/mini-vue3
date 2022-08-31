@@ -7,39 +7,58 @@ import {
   track,
   trigger
 } from './effect'
-import { reactive, ReactiveFlags, reactiveMap, Target, toRaw } from './reactive'
+import { 
+  reactive,
+  readonly,
+  ReactiveFlags,
+  reactiveMap,
+  readonlyMap,
+  Target,
+  toRaw,
+  isReadonly
+} from './reactive'
 import { TrackOpTypes, TriggerOpTypes } from './operations'
 
-export const mutableHandlers: ProxyHandler<object> = {
-  get(target: Target, key, receiver: object) {
+function createGetter(isReadonly = false) {
+  return function get(target: Target, key: string | symbol, receiver: object) {
     // this works with `isReactive()` API
     if (key === ReactiveFlags.IS_REACTIVE) {
-      return true
+      return !isReadonly
+    } else if (key === ReactiveFlags.IS_READONLY) {
+      return isReadonly
     } else if ( // return the raw target, works with 'toRaw()' API
       key === ReactiveFlags.RAW &&
-      receiver === reactiveMap.get(target)
+      receiver === (isReadonly ? readonlyMap : reactiveMap).get(target)
     ) {
       return target
     }
 
     const res = Reflect.get(target, key, receiver)
 
-    track(target, TrackOpTypes.GET, key)
+    if (!isReadonly) {
+      track(target, TrackOpTypes.GET, key)
+    }
 
-    // make nested properties to be reactive
+    // make nested properties to be reactive or readonly
     if (isObject(res)) {
-      return reactive(res)
+      return isReadonly ? readonly(res) : reactive(res)
     }
 
     return res
-  },
+  }
+}
+
+export const mutableHandlers: ProxyHandler<object> = {
+  get: createGetter(),
   set(target, key, value: unknown, receiver: object) {
     // get old value first
     let oldVal = (target as any)[key]
 
+    if (!isReadonly(value)) {
     // value should be the original object rather Proxy
-    oldVal = toRaw(oldVal)
-    value = toRaw(value)
+      oldVal = toRaw(oldVal)
+      value = toRaw(value)
+    }
 
     const hadKey = hasOwn(target, key)
     const res = Reflect.set(target, key, value, receiver)
@@ -75,5 +94,15 @@ export const mutableHandlers: ProxyHandler<object> = {
   ownKeys(target) {
     track(target, TrackOpTypes.ITERATE, ITERATE_KEY)
     return Reflect.ownKeys(target)
+  }
+}
+
+export const readonlyHandlers: ProxyHandler<object> = {
+  get: createGetter(true),
+  set() {
+    return true
+  },
+  deleteProperty() {
+    return true
   }
 }

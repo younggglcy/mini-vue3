@@ -383,7 +383,6 @@ describe('reactivity/effect', () => {
     expect(dummy).toBe('World')
   })
 
-  // eslint-disable-next-line max-len
   it('should not be triggered by mutating a property, which is used in an inactive branch', () => {
     let dummy
     const obj = reactive({ prop: 'value', run: true })

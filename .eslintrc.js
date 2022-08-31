@@ -27,7 +27,6 @@ module.exports = {
       'never'
     ],
     'comma-dangle': ['error', 'never'],
-    'max-len': 'error',
     'arrow-parens': ['error', 'as-needed'],
     'no-debugger': 'error',
     'no-unused-vars': [
