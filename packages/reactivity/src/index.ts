@@ -11,6 +11,11 @@ export {
   effect,
   track,
   trigger,
+  trackEffects,
+  triggerEffects,
+  pauseTracking,
+  enableTracking,
+  resetTracking,
   ITERATE_KEY,
   ReactiveEffect
 } from './effect'

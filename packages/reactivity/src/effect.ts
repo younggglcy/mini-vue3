@@ -26,6 +26,24 @@ export function isEffect(fn: any): fn is ReactiveEffect {
   return !!fn && fn._isEffect
 }
 
+export let shouldTrack = true
+const trackStack: boolean[] = []
+
+export function pauseTracking() {
+  trackStack.push(shouldTrack)
+  shouldTrack = false
+}
+
+export function enableTracking() {
+  trackStack.push(shouldTrack)
+  shouldTrack = true
+}
+
+export function resetTracking() {
+  const last = trackStack.pop()
+  shouldTrack = last === undefined ? true : last
+}
+
 export function effect<T = any>(fn: () => T): ReactiveEffect<T> {
   if (isEffect(fn)) {
     fn = fn.raw
@@ -51,6 +69,7 @@ function run(effect: ReactiveEffect, fn: () => void): unknown {
   if (!effectStack.includes(effect)) {
     cleanup(effect)
     try {
+      enableTracking()
       effectStack.push(effect)
       activeEffect = effect
       // when executing this.fn()
@@ -59,6 +78,7 @@ function run(effect: ReactiveEffect, fn: () => void): unknown {
       return fn()
     } finally {
       effectStack.pop()
+      resetTracking()
       activeEffect = effectStack[effectStack.length - 1]
     }
   }
@@ -79,7 +99,7 @@ export function track(
   type: TrackOpTypes,
   key: unknown
 ) {
-  if (activeEffect) {
+  if (activeEffect && shouldTrack) {
     let depsMap = targetMap.get(target)
     if (!depsMap) {
       targetMap.set(target, (depsMap = new Map()))
@@ -88,10 +108,15 @@ export function track(
     if (!dep) {
       depsMap.set(key, (dep = createDep()))
     }
-    if (!dep.has(activeEffect)) {
-      dep.add(activeEffect)
-      activeEffect.deps.push(dep)
-    }
+
+    trackEffects(dep)
+  }
+}
+
+export function trackEffects(dep: Dep) {
+  if (!dep.has(activeEffect!)) {
+    dep.add(activeEffect!)
+    activeEffect!.deps.push(dep)
   }
 }
 
