@@ -13,11 +13,11 @@ export default defineConfig({
     alias: [
       {
         find: /^@mini-vue3\/(.*?)$/,
-        replacement: resolvePath('/packages/$1/src')
+        replacement: resolvePath('./packages/$1/src')
       },
       {
         find: 'mini-vue3',
-        replacement: resolvePath('/packages/vue/src')
+        replacement: resolvePath('./packages/vue/src')
       }
     ]
   }
