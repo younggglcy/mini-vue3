@@ -1,6 +1,7 @@
 import { 
   isObject,
-  hasOwn
+  hasOwn,
+  hasChanged
 } from '@mini-vue3/shared'
 import {
   ITERATE_KEY,
@@ -18,6 +19,7 @@ import {
   isReadonly
 } from './reactive'
 import { TrackOpTypes, TriggerOpTypes } from './operations'
+import { isRef } from './ref'
 
 function createGetter(isReadonly = false) {
   return function get(target: Target, key: string | symbol, receiver: object) {
@@ -37,6 +39,11 @@ function createGetter(isReadonly = false) {
 
     if (!isReadonly) {
       track(target, TrackOpTypes.GET, key)
+    }
+
+    if (isRef(res)) {
+      // ref unwrapping
+      return res.value
     }
 
     // make nested properties to be reactive or readonly
@@ -59,6 +66,10 @@ export const mutableHandlers: ProxyHandler<object> = {
       oldVal = toRaw(oldVal)
       value = toRaw(value)
     }
+    if (isRef(oldVal) && !isRef(value)) {
+      oldVal.value = value
+      return true
+    }
 
     const hadKey = hasOwn(target, key)
     const res = Reflect.set(target, key, value, receiver)
@@ -67,7 +78,7 @@ export const mutableHandlers: ProxyHandler<object> = {
     if (target === toRaw(receiver)) {
       if (!hadKey) {
         trigger(target, TriggerOpTypes.ADD, key)
-      } else if (!Object.is(oldVal, value)) {
+      } else if (hasChanged(value, oldVal)) {
         trigger(target, TriggerOpTypes.SET ,key)
       }
     }

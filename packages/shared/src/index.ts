@@ -8,3 +8,6 @@ export const hasOwn = (
 ) : key is keyof typeof val => hasOwnProperty.call(val, key)
 
 export const isArray = Array.isArray
+
+export const hasChanged = (value: any, oldValue: any): boolean =>
+  !Object.is(value, oldValue)

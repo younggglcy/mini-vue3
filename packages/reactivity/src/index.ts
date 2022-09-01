@@ -5,6 +5,7 @@ export {
   isReadonly,
   isProxy,
   toRaw,
+  toReactive,
   ReactiveFlags
 } from './reactive'
 export {
@@ -20,3 +21,7 @@ export {
   ReactiveEffect
 } from './effect'
 export { TrackOpTypes, TriggerOpTypes } from './operations'
+export {
+  ref,
+  isRef
+} from './ref'

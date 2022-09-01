@@ -1,5 +1,6 @@
 import { describe, it, expect } from 'vitest'
 import { reactive, isReactive, toRaw } from '../src/reactive'
+import { isRef, ref } from '../src/ref'
 
 describe('reactivity/reactive', () => {
   it('Object', () => {
@@ -114,5 +115,13 @@ describe('reactivity/reactive', () => {
     const raw = toRaw(obj)
     expect(raw).toBe(obj)
     expect(raw).not.toBe(toRaw(original))
+  })
+
+  it('should not unwrap Ref<T>', () => {
+    const observedNumberRef = reactive(ref(1))
+    const observedObjectRef = reactive(ref({ foo: 1 }))
+
+    expect(isRef(observedNumberRef)).toBe(true)
+    expect(isRef(observedObjectRef)).toBe(true)
   })
 })
