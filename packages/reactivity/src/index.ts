@@ -6,7 +6,9 @@ export {
   isProxy,
   toRaw,
   toReactive,
-  ReactiveFlags
+  ReactiveFlags,
+  DeepReadonly,
+  UnwrapNestedRefs
 } from './reactive'
 export {
   effect,
@@ -23,5 +25,7 @@ export {
 export { TrackOpTypes, TriggerOpTypes } from './operations'
 export {
   ref,
-  isRef
+  isRef,
+  Ref,
+  UnwrapRef
 } from './ref'

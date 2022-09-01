@@ -1,5 +1,6 @@
 import { isObject } from '@mini-vue3/shared'
 import { mutableHandlers, readonlyHandlers } from './baseHandlers'
+import { Ref, UnwrapRefSimple } from './ref'
 
 export const enum ReactiveFlags {
   IS_REACTIVE = '__v_isReactive',
@@ -16,7 +17,10 @@ export interface Target {
 export const reactiveMap = new WeakMap<Target, any>()
 export const readonlyMap = new WeakMap<Target, any>()
 
-export function reactive<T extends object>(target: T): any {
+export type UnwrapNestedRefs<T> = T extends Ref ? T : UnwrapRefSimple<T>
+
+export function reactive<T extends object>(target: T): UnwrapNestedRefs<T>
+export function reactive(target: object) {
   // if trying to observe a readonly proxy, return the readonly version.
   if (isReadonly(target)) {
     return target
@@ -29,7 +33,19 @@ export function reactive<T extends object>(target: T): any {
   )
 }
 
-export function readonly<T extends object>(target: T): any {
+type Primitive = string | number | boolean | bigint | symbol | undefined | null
+type Builtin = Primitive | Function | Date | Error | RegExp
+export type DeepReadonly<T> = T extends Builtin
+  ? T
+  : T extends Promise<infer U>
+  ? Promise<DeepReadonly<U>>
+  : T extends Ref<infer U>
+  ? Readonly<Ref<DeepReadonly<U>>>
+  : T extends {}
+  ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
+  : Readonly<T>
+
+export function readonly<T extends object>(target: T): DeepReadonly<UnwrapNestedRefs<T>> {
   return createReactiveObject(
     target,
     true,
