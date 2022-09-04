@@ -14,6 +14,7 @@ export interface ReactiveEffect<T = any> {
   raw: () => T
   deps: Dep[]
   _isEffect: true
+  options: ReactiveEffectOptions
 }
 
 export let activeEffect: ReactiveEffect | undefined
@@ -44,23 +45,38 @@ export function resetTracking() {
   shouldTrack = last === undefined ? true : last
 }
 
-export function effect<T = any>(fn: () => T): ReactiveEffect<T> {
+export interface ReactiveEffectOptions {
+  lazy?: boolean
+  scheduler?: (...args: any[]) => any
+  computed?: boolean
+}
+
+export function effect<T = any>(
+  fn: () => T,
+  options?: ReactiveEffectOptions
+): ReactiveEffect<T> {
   if (isEffect(fn)) {
     fn = fn.raw
   }
 
-  const effect = createReactiveEffect(fn)
-  effect()
+  const effect = createReactiveEffect(fn, options ?? {})
+  if (!options || !options.lazy) {
+    effect()
+  }
   return effect
 }
 
-function createReactiveEffect<T = any>(fn: () => T): ReactiveEffect<T> {
+function createReactiveEffect<T = any>(
+  fn: () => T,
+  options: ReactiveEffectOptions
+): ReactiveEffect<T> {
   const effect = function() {
     return run(effect, fn)
   } as ReactiveEffect
   effect._isEffect = true
   effect.raw = fn
   effect.deps = []
+  effect.options = options
   return effect
 }
 
@@ -155,5 +171,26 @@ export function trigger(
 export function triggerEffects(dep: Dep | ReactiveEffect[]) {
   // spread into array for stabilization
   const effects = isArray(dep) ? dep : [...dep]
-  effects.forEach(effect => effect())
+  // Important: computed effects must be run first so that computed getters
+  // can be invalidated before any normal effects that depend on them are run.
+  effects.forEach(effect => {
+    const { computed, scheduler } = effect.options
+    if (computed) {
+      if (scheduler) {
+        scheduler()
+      } else {
+        effect()
+      }
+    }
+  })
+  effects.forEach(effect => {
+    const { computed, scheduler } = effect.options
+    if (!computed) {
+      if (scheduler) {
+        scheduler(effect)
+      } else {
+        effect()
+      }
+    }
+  })
 }

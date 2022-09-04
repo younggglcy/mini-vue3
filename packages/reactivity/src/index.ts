@@ -34,3 +34,8 @@ export {
   ToRefs,
   UnwrapRef
 } from './ref'
+export {
+  computed,
+  ComputedRef,
+  ComputedGetter
+} from './computed'
