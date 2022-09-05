@@ -26,6 +26,11 @@ export { TrackOpTypes, TriggerOpTypes } from './operations'
 export {
   ref,
   isRef,
+  toRef,
+  toRefs,
+  unref,
   Ref,
+  ToRef,
+  ToRefs,
   UnwrapRef
 } from './ref'

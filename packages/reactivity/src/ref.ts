@@ -24,6 +24,46 @@ export function isRef(r: any): r is Ref {
   return !!(r && r.__v_isRef)
 }
 
+export function unref<T>(ref: T | Ref<T>): T {
+  return isRef(ref) ? ref.value : ref
+}
+
+export type ToRef<T> = [T] extends [Ref] ? T : Ref<T>
+export function toRef<T extends object, K extends keyof T>(
+  object: T,
+  key: K
+): ToRef<T[K]> {
+  const val = object[key]
+  if (isRef(val)) return val as any
+  return (new ObjectRefImpl(object, key) as any)
+}
+
+export type ToRefs<T extends object> = { [K in keyof T]: ToRef<T[K]> }
+export function toRefs<T extends object>(object: T): ToRefs<T> {
+  const ret: any = {}
+  for (const key in object) {
+    ret[key] = toRef(object, key)
+  }
+  return ret
+}
+
+class ObjectRefImpl<T extends object, K extends keyof T> {
+  public readonly __v_isRef = true
+
+  constructor(
+    private readonly _object: T,
+    private readonly _key: K
+  ) {}
+
+  get value() {
+    return this._object[this._key]
+  }
+
+  set value(newVal) {
+    this._object[this._key] = newVal
+  }
+}
+
 class RefImpl<T> {
   private _value: T
   private _rawValue: T
