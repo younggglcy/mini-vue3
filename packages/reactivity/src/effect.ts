@@ -48,7 +48,6 @@ export function resetTracking() {
 export interface ReactiveEffectOptions {
   lazy?: boolean
   scheduler?: (...args: any[]) => any
-  computed?: boolean
 }
 
 export function effect<T = any>(
@@ -171,26 +170,12 @@ export function trigger(
 export function triggerEffects(dep: Dep | ReactiveEffect[]) {
   // spread into array for stabilization
   const effects = isArray(dep) ? dep : [...dep]
-  // Important: computed effects must be run first so that computed getters
-  // can be invalidated before any normal effects that depend on them are run.
   effects.forEach(effect => {
-    const { computed, scheduler } = effect.options
-    if (computed) {
-      if (scheduler) {
-        scheduler()
-      } else {
-        effect()
-      }
-    }
-  })
-  effects.forEach(effect => {
-    const { computed, scheduler } = effect.options
-    if (!computed) {
-      if (scheduler) {
-        scheduler(effect)
-      } else {
-        effect()
-      }
+    const { scheduler } = effect.options
+    if (scheduler) {
+      scheduler(effect)
+    } else {
+      effect()
     }
   })
 }

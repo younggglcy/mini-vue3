@@ -24,13 +24,12 @@ export class ComputedRefImpl<T> {
   public readonly effect: ReactiveEffect<T>
 
   public readonly __v_isRef = true
-  public readonly [ReactiveFlags.IS_READONLY]: boolean = false
+  public readonly [ReactiveFlags.IS_READONLY] = true
 
   constructor(getter: ComputedGetter<T>) {
     const that = this
     this.effect = effect(getter, {
       lazy: true,
-      computed: true,
       scheduler() {
         if (!that._dirty) {
           that._dirty = true
@@ -38,7 +37,6 @@ export class ComputedRefImpl<T> {
         }
       }
     })
-    this[ReactiveFlags.IS_READONLY] = true
   }
 
   get value() {
