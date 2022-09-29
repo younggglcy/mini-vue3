@@ -87,6 +87,7 @@ class RefImpl<T> {
     if (hasChanged(newVal, this._rawValue)) {
       this._rawValue = newVal
       this._value = useDirectiveValue ? newVal : toReactive(newVal)
+      // manually execute this after change `this._value`
       triggerRefValue(this)
     }
   }
@@ -97,12 +98,20 @@ type RefBase<T> = {
   value: T
 }
 
+/**
+ * collect dependencies for a ref-like object
+ * by calling `trackEffects()` underneth
+ */
 export function trackRefValue(ref: RefBase<any>) {
   if (activeEffect && shouldTrack) {
     trackEffects(ref.dep || (ref.dep = createDep()))
   }
 }
 
+/**
+ * find related effects and invoke them for a ref-like object
+ * by calling `triggerEffects()` underneth
+ */
 export function triggerRefValue(ref: RefBase<any>) {
   if (ref.dep) {
     triggerEffects(ref.dep)

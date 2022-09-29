@@ -26,7 +26,7 @@ function createGetter(isReadonly = false) {
     // this works with `isReactive()` API
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
-    } else if (key === ReactiveFlags.IS_READONLY) {
+    } else if (key === ReactiveFlags.IS_READONLY) { // works with `isReadonly()`
       return isReadonly
     } else if ( // return the raw target, works with 'toRaw()' API
       key === ReactiveFlags.RAW &&

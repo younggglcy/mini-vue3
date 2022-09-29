@@ -50,6 +50,12 @@ export interface ReactiveEffectOptions {
   scheduler?: (...args: any[]) => any
 }
 
+/**
+ * core function and engine of reactivity system
+ * 
+ * @param fn the function to be wrapped as a **reactive** function
+ * @param options 
+ */
 export function effect<T = any>(
   fn: () => T,
   options?: ReactiveEffectOptions
@@ -99,6 +105,10 @@ function run(effect: ReactiveEffect, fn: () => void): unknown {
   }
 }
 
+/**
+ * cleanup the connection between the given effect
+ * and it's deps
+ */
 function cleanup(effect: ReactiveEffect) {
   const { deps } = effect
   if (deps.length) {
@@ -109,6 +119,9 @@ function cleanup(effect: ReactiveEffect) {
   }
 }
 
+/**
+ * collect all dependencies the current `activeEffect` needs
+ */
 export function track(
   target: object,
   type: TrackOpTypes,
@@ -128,6 +141,10 @@ export function track(
   }
 }
 
+/**
+ * core logic of `track`, make a connection between
+ * `activeEffect` and given deps
+ */
 export function trackEffects(dep: Dep) {
   if (!dep.has(activeEffect!)) {
     dep.add(activeEffect!)
@@ -135,6 +152,9 @@ export function trackEffects(dep: Dep) {
   }
 }
 
+/**
+ * find related effects and invoke them
+ */
 export function trigger(
   target: object,
   type: TriggerOpTypes,
@@ -167,6 +187,9 @@ export function trigger(
   triggerEffects(createDep(effects))
 }
 
+/**
+ * core logic of `trigger`, invoke every effect of the given dep
+ */
 export function triggerEffects(dep: Dep | ReactiveEffect[]) {
   // spread into array for stabilization
   const effects = isArray(dep) ? dep : [...dep]

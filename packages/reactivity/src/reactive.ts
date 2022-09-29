@@ -97,14 +97,18 @@ export function isProxy(value: unknown): boolean {
   return isReactive(value) || isReadonly(value)
 }
 
-/** return the raw object if it's a Proxy.
- *  and if observed is not a object, just return itself
-  */
+/** 
+ * return the raw object if it's a Proxy.
+ * and if observed is not a object, just return itself
+ */
 export function toRaw<T>(observed: T): T {
   const raw = observed && (observed as Target)[ReactiveFlags.RAW] as any
   return raw ? toRaw(raw) : observed
 }
 
+/**
+ * if `value` is a object, wrap it with `reactive()`
+ */
 export function toReactive<T extends unknown>(value: T): T {
   return isObject(value) ? reactive(value) : value
 }
