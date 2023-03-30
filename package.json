@@ -12,19 +12,22 @@
   "scripts": {
     "lint": "eslint --ext .ts packages/*/{src,__tests__}/**.ts",
     "lint:fix": "pnpm run lint --fix",
+    "format": "prettier --write --cache --parser typescript \"**/*.[tj]s?(x)\"",
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
   "devDependencies": {
-    "@types/node": "^18.7.11",
-    "@typescript-eslint/parser": "^5.34.0",
-    "@vitest/coverage-c8": "^0.22.1",
     "@mini-vue3/reactivity": "workspace:^1.0.0",
-    "eslint": "^8.22.0",
+    "@types/node": "^18.15.11",
+    "@typescript-eslint/parser": "^5.57.0",
+    "@vitest/coverage-c8": "^0.22.1",
+    "eslint": "^8.37.0",
     "jsdom": "^20.0.0",
+    "lint-staged": "^13.2.0",
     "mini-vue3": "workspace:^1.0.0",
-    "typescript": "^4.7.4",
-    "vite": "^3.0.9",
+    "prettier": "^2.8.7",
+    "typescript": "^5.0.2",
+    "vite": "^4.2.1",
     "vitest": "^0.22.1"
   }
 }

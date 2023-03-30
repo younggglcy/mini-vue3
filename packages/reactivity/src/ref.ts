@@ -1,6 +1,6 @@
 import { Dep, createDep } from './dep'
 import { isReadonly, toRaw, toReactive } from './reactive'
-import { 
+import {
   activeEffect,
   shouldTrack,
   trackEffects,
@@ -12,7 +12,9 @@ export interface Ref<T = any> {
   value: T
 }
 
-export function ref<T extends object>(value: T): [T] extends [Ref] ? T : Ref<UnwrapRef<T>>
+export function ref<T extends object>(
+  value: T
+): [T] extends [Ref] ? T : Ref<UnwrapRef<T>>
 export function ref<T>(value: T): Ref<UnwrapRef<T>>
 export function ref<T = any>(): Ref<T | undefined>
 export function ref(value?: unknown) {
@@ -35,7 +37,7 @@ export function toRef<T extends object, K extends keyof T>(
 ): ToRef<T[K]> {
   const val = object[key]
   if (isRef(val)) return val as any
-  return (new ObjectRefImpl(object, key) as any)
+  return new ObjectRefImpl(object, key) as any
 }
 
 export type ToRefs<T extends object> = { [K in keyof T]: ToRef<T[K]> }
@@ -50,10 +52,7 @@ export function toRefs<T extends object>(object: T): ToRefs<T> {
 class ObjectRefImpl<T extends object, K extends keyof T> {
   public readonly __v_isRef = true
 
-  constructor(
-    private readonly _object: T,
-    private readonly _key: K
-  ) {}
+  constructor(private readonly _object: T, private readonly _key: K) {}
 
   get value() {
     return this._object[this._key]
@@ -130,5 +129,5 @@ export type UnwrapRefSimple<T> = T extends
   | Ref
   ? T
   : T extends object
-    ? { [P in keyof T]: P extends symbol ? T[P] : UnwrapRef<T[P]> }
-    : T
+  ? { [P in keyof T]: P extends symbol ? T[P] : UnwrapRef<T[P]> }
+  : T

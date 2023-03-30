@@ -52,9 +52,9 @@ export interface ReactiveEffectOptions {
 
 /**
  * core function and engine of reactivity system
- * 
+ *
  * @param fn the function to be wrapped as a **reactive** function
- * @param options 
+ * @param options
  */
 export function effect<T = any>(
   fn: () => T,
@@ -75,7 +75,7 @@ function createReactiveEffect<T = any>(
   fn: () => T,
   options: ReactiveEffectOptions
 ): ReactiveEffect<T> {
-  const effect = function() {
+  const effect = function () {
     return run(effect, fn)
   } as ReactiveEffect
   effect._isEffect = true
@@ -122,11 +122,7 @@ function cleanup(effect: ReactiveEffect) {
 /**
  * collect all dependencies the current `activeEffect` needs
  */
-export function track(
-  target: object,
-  type: TrackOpTypes,
-  key: unknown
-) {
+export function track(target: object, type: TrackOpTypes, key: unknown) {
   if (activeEffect && shouldTrack) {
     let depsMap = targetMap.get(target)
     if (!depsMap) {
@@ -155,11 +151,7 @@ export function trackEffects(dep: Dep) {
 /**
  * find related effects and invoke them
  */
-export function trigger(
-  target: object,
-  type: TriggerOpTypes,
-  key?: unknown
-) {
+export function trigger(target: object, type: TriggerOpTypes, key?: unknown) {
   const depsMap = targetMap.get(target)
   if (!depsMap) {
     // never been tracked

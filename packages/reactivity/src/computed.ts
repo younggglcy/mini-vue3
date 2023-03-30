@@ -8,9 +8,7 @@ export interface ComputedRef<T = any> extends Ref<T> {
   readonly value: T
 }
 
-export function computed<T>(
-  getter: ComputedGetter<T>
-): ComputedRef<T> {
+export function computed<T>(getter: ComputedGetter<T>): ComputedRef<T> {
   return new ComputedRefImpl(getter)
 }
 
@@ -54,4 +52,3 @@ export class ComputedRefImpl<T> {
     return this._value
   }
 }
-

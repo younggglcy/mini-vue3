@@ -1,14 +1,6 @@
-import { 
-  isObject,
-  hasOwn,
-  hasChanged
-} from '@mini-vue3/shared'
+import { isObject, hasOwn, hasChanged } from '@mini-vue3/shared'
+import { ITERATE_KEY, track, trigger } from './effect'
 import {
-  ITERATE_KEY,
-  track,
-  trigger
-} from './effect'
-import { 
   reactive,
   readonly,
   ReactiveFlags,
@@ -26,9 +18,11 @@ function createGetter(isReadonly = false) {
     // this works with `isReactive()` API
     if (key === ReactiveFlags.IS_REACTIVE) {
       return !isReadonly
-    } else if (key === ReactiveFlags.IS_READONLY) { // works with `isReadonly()`
+    } else if (key === ReactiveFlags.IS_READONLY) {
+      // works with `isReadonly()`
       return isReadonly
-    } else if ( // return the raw target, works with 'toRaw()' API
+    } else if (
+      // return the raw target, works with 'toRaw()' API
       key === ReactiveFlags.RAW &&
       receiver === (isReadonly ? readonlyMap : reactiveMap).get(target)
     ) {
@@ -62,7 +56,7 @@ export const mutableHandlers: ProxyHandler<object> = {
     let oldVal = (target as any)[key]
 
     if (!isReadonly(value)) {
-    // value should be the original object rather Proxy
+      // value should be the original object rather Proxy
       oldVal = toRaw(oldVal)
       value = toRaw(value)
     }
@@ -79,7 +73,7 @@ export const mutableHandlers: ProxyHandler<object> = {
       if (!hadKey) {
         trigger(target, TriggerOpTypes.ADD, key)
       } else if (hasChanged(value, oldVal)) {
-        trigger(target, TriggerOpTypes.SET ,key)
+        trigger(target, TriggerOpTypes.SET, key)
       }
     }
     return res

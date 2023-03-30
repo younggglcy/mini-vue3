@@ -1,13 +1,5 @@
 import { describe, it, expect, test } from 'vitest'
-import {
-  ref,
-  effect,
-  reactive,
-  unref,
-  isRef,
-  toRef,
-  toRefs
-} from '../src'
+import { ref, effect, reactive, unref, isRef, toRef, toRefs } from '../src'
 
 describe('reactivity/ref', () => {
   it('should hold a value', () => {

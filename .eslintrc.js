@@ -4,30 +4,15 @@ const NodeGlobals = ['module', 'require']
 // eslint-disable-next-line no-restricted-globals
 module.exports = {
   env: {
-    'browser': true,
-    'es2021': true,
-    'node': true
+    browser: true,
+    node: true
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
-    'ecmaVersion': 'latest',
-    'sourceType': 'module'
+    ecmaVersion: 'latest',
+    sourceType: 'module'
   },
   rules: {
-    'indent': [
-      'error',
-      2
-    ],
-    'quotes': [
-      'error',
-      'single'
-    ],
-    'semi': [
-      'error',
-      'never'
-    ],
-    'comma-dangle': ['error', 'never'],
-    'arrow-parens': ['error', 'as-needed'],
     'no-debugger': 'error',
     'no-unused-vars': [
       'error',
@@ -45,5 +30,6 @@ module.exports = {
         'no-restricted-globals': 'off'
       }
     }
-  ]
+  ],
+  ignorePatterns: ['node_modules/', 'dist/']
 }

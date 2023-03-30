@@ -25,12 +25,7 @@ export function reactive(target: object) {
   if (isReadonly(target)) {
     return target
   }
-  return createReactiveObject(
-    target,
-    false,
-    mutableHandlers,
-    reactiveMap
-  )
+  return createReactiveObject(target, false, mutableHandlers, reactiveMap)
 }
 
 type Primitive = string | number | boolean | bigint | symbol | undefined | null
@@ -45,13 +40,10 @@ export type DeepReadonly<T> = T extends Builtin
   ? { readonly [K in keyof T]: DeepReadonly<T[K]> }
   : Readonly<T>
 
-export function readonly<T extends object>(target: T): DeepReadonly<UnwrapNestedRefs<T>> {
-  return createReactiveObject(
-    target,
-    true,
-    readonlyHandlers,
-    readonlyMap
-  )
+export function readonly<T extends object>(
+  target: T
+): DeepReadonly<UnwrapNestedRefs<T>> {
+  return createReactiveObject(target, true, readonlyHandlers, readonlyMap)
 }
 
 function createReactiveObject(
@@ -74,10 +66,7 @@ function createReactiveObject(
     return existingProxy
   }
 
-  const proxy = new Proxy(
-    target,
-    baseHandlers
-  )
+  const proxy = new Proxy(target, baseHandlers)
   proxyMap.set(target, proxy)
   return proxy
 }
@@ -97,12 +86,12 @@ export function isProxy(value: unknown): boolean {
   return isReactive(value) || isReadonly(value)
 }
 
-/** 
+/**
  * return the raw object if it's a Proxy.
  * and if observed is not a object, just return itself
  */
 export function toRaw<T>(observed: T): T {
-  const raw = observed && (observed as Target)[ReactiveFlags.RAW] as any
+  const raw = observed && ((observed as Target)[ReactiveFlags.RAW] as any)
   return raw ? toRaw(raw) : observed
 }
 

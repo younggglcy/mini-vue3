@@ -1,9 +1,5 @@
 import { describe, it, expect, vi } from 'vitest'
-import {
-  computed,
-  reactive,
-  effect
-} from '../src'
+import { computed, reactive, effect } from '../src'
 
 describe('reactivity/computed', () => {
   it('should return updated value', () => {
