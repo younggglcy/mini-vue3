@@ -1,0 +1,12 @@
+{
+  "name": "@mini-vue3/runtime-core",
+  "version": "1.0.0",
+  "description": "@mini-vue3/runtime-core",
+  "main": "index.js",
+  "author": "Young Liang <younggglcy@gmail.com>",
+  "license": "MIT",
+  "dependencies": {
+    "@mini-vue3/shared": "workspace:^1.0.0",
+    "@mini-vue3/reactivity": "workspace:^1.0.0"
+  }
+}
