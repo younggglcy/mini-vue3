@@ -9,6 +9,8 @@ export const hasOwn = (
 
 export const isArray = Array.isArray
 
+export const isString = (val: unknown): val is string => typeof val === 'string'
+
 export const extend = Object.assign
 
 const onRE = /^on[^a-z]/
