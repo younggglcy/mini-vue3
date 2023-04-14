@@ -8,7 +8,8 @@ export {
   toReactive,
   ReactiveFlags,
   DeepReadonly,
-  UnwrapNestedRefs
+  UnwrapNestedRefs,
+  markRaw
 } from './reactive'
 export {
   effect,

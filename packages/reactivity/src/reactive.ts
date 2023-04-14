@@ -1,11 +1,12 @@
-import { isObject } from '@mini-vue3/shared'
+import { def, isObject } from '@mini-vue3/shared'
 import { mutableHandlers, readonlyHandlers } from './baseHandlers'
-import { Ref, UnwrapRefSimple } from './ref'
+import { RawSymbol, Ref, UnwrapRefSimple } from './ref'
 
 export const enum ReactiveFlags {
   IS_REACTIVE = '__v_isReactive',
   RAW = '__v_raw',
-  IS_READONLY = '__v_isReadonly'
+  IS_READONLY = '__v_isReadonly',
+  SKIP = '__v_skip'
 }
 
 export interface Target {
@@ -100,4 +101,11 @@ export function toRaw<T>(observed: T): T {
  */
 export function toReactive<T extends unknown>(value: T): T {
   return isObject(value) ? reactive(value) : value
+}
+
+export type Raw<T> = T & { [RawSymbol]?: true }
+
+export function markRaw<T extends object>(value: T): Raw<T> {
+  def(value, ReactiveFlags.SKIP, true)
+  return value
 }

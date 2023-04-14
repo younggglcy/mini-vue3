@@ -8,6 +8,8 @@ import {
 } from './effect'
 import { hasChanged } from '@mini-vue3/shared'
 
+export declare const RawSymbol: unique symbol
+
 export interface Ref<T = any> {
   value: T
 }
