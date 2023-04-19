@@ -7,7 +7,8 @@ function resolvePath(path: string) {
 
 export default defineConfig({
   test: {
-    environment: 'jsdom'
+    environment: 'jsdom',
+    globals: true
   },
   resolve: {
     alias: [

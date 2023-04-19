@@ -16,7 +16,7 @@
     "removeComments": false,
     "jsx": "preserve",
     "lib": ["esnext", "dom"],
-    "types": ["node"],
+    "types": ["node", "vitest/globals"],
     "rootDir": ".",
     "paths": {
       "@mini-vue3/*": ["packages/*/src"],
