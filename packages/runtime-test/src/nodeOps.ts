@@ -146,5 +146,5 @@ function remove(child: TestNode, logOp = true) {
 export const nodeOps = {
   insert,
   remove,
-  createElement,
+  createElement
 }

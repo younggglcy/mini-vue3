@@ -1,6 +1,13 @@
-import { isProxy } from "@mini-vue3/reactivity"
-import type { Data } from "./component"
-import { extend, isArray, isObject, isString, normalizeClass, normalizeStyle } from "@mini-vue3/shared"
+import { isProxy } from '@mini-vue3/reactivity'
+import type { Data } from './component'
+import {
+  extend,
+  isArray,
+  isObject,
+  isString,
+  normalizeClass,
+  normalizeStyle
+} from '@mini-vue3/shared'
 
 export type VNodeProps = {
   [key: string]: any
@@ -45,11 +52,7 @@ export function createVNode(
     }
   }
 
-  return createBaseVNode(
-    type,
-    props,
-    children
-  )
+  return createBaseVNode(type, props, children)
 }
 
 function createBaseVNode(
@@ -67,7 +70,5 @@ function createBaseVNode(
 
 export function guardReactiveProps(props: (Data & VNodeProps) | null) {
   if (!props) return null
-  return isProxy(props)
-    ? extend({}, props)
-    : props
+  return isProxy(props) ? extend({}, props) : props
 }

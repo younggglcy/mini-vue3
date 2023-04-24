@@ -1,5 +1,5 @@
-import { isArray, isObject } from "@mini-vue3/shared";
-import { VNode, createVNode, isVNode } from "./vnode";
+import { isArray, isObject } from '@mini-vue3/shared'
+import { VNode, createVNode, isVNode } from './vnode'
 
 export function h(type: string, propsOrChildren?: any, children?: any): VNode {
   const l = arguments.length
