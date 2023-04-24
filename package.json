@@ -16,6 +16,15 @@
     "test": "vitest",
     "coverage": "vitest run --coverage"
   },
+  "lint-staged": {
+    "*.{js,json}": [
+      "prettier --write"
+    ],
+    "*.ts?(x)": [
+      "eslint",
+      "prettier --parser=typescript --write"
+    ]
+  },
   "devDependencies": {
     "@mini-vue3/reactivity": "workspace:^1.0.0",
     "@types/node": "^18.15.11",
