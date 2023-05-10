@@ -1,7 +1,7 @@
-import { isArray } from '@mini-vue3/shared'
+import { ShapeFlags } from '@mini-vue3/shared'
 import type { CreateAppFunction } from './apiCreateApp'
 import type { Component } from './component'
-import type { VNode, VNodeArrayChildren } from './vnode'
+import { VNode, VNodeArrayChildren, normalizeVNode } from './vnode'
 
 export interface Renderer<HostElement = RendererElement> {
   render: RootRenderFunction<HostElement>
@@ -31,6 +31,7 @@ export interface RendererOptions<
   insert(el: HostNode, parent: HostElement, anchor?: HostNode | null): void
   remove(el: HostNode): void
   createElement(type: string): HostElement
+  setElementText(node: HostElement, text: string): void
 }
 
 export function createRenderer(options: RendererOptions) {
@@ -42,7 +43,8 @@ function baseCreateRenderer(options: RendererOptions): Renderer {
     insert: hostInsert,
     remove: hostRemove,
     patchProp: hostPatchProp,
-    createElement: hostCreateElement
+    createElement: hostCreateElement,
+    setElementText: hostSetElementText
   } = options
 
   const patch: (
@@ -65,11 +67,15 @@ function baseCreateRenderer(options: RendererOptions): Renderer {
     container: RendererElement,
     anchor?: RendererNode | null
   ) => void = (vnode, container, anchor = null) => {
-    const { props, children, type } = vnode
-    const el = hostCreateElement(type)
-    if (children) {
-      mountChildren(children, container)
+    const { props, children, type, shapeFlag } = vnode
+    const el = hostCreateElement(type as string)
+
+    if (shapeFlag & ShapeFlags.TEXT_CHILDREN) {
+      hostSetElementText(el, children as string)
+    } else if (shapeFlag & ShapeFlags.ARRAY_CHILDREN) {
+      mountChildren(children as VNodeArrayChildren, el, null)
     }
+
     hostInsert(el, container, anchor)
     if (props) {
       for (const key in props) {
@@ -84,10 +90,8 @@ function baseCreateRenderer(options: RendererOptions): Renderer {
     anchor?: RendererNode | null
   ) => void = (children, container, anchor = null) => {
     for (let i = 0; i < children.length; i++) {
-      const child = children[i]
-      if (isArray(child)) {
-        mountChildren(child, container, anchor)
-      } else child && patch(null, child, container, anchor)
+      const child = normalizeVNode(children[i])
+      patch(null, child, container, anchor)
     }
   }
 
