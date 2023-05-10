@@ -143,8 +143,32 @@ function remove(child: TestNode, logOp = true) {
   }
 }
 
+function setElementText(el: TestElement, text: string) {
+  logNodeOp({
+    type: NodeOpTypes.SET_ELEMENT_TEXT,
+    targetNode: el,
+    text
+  })
+  el.children.forEach(c => {
+    c.parentNode = null
+  })
+  if (!text) {
+    el.children = []
+  } else {
+    el.children = [
+      {
+        id: nodeId++,
+        type: TestNodeTypes.TEXT,
+        text,
+        parentNode: el
+      }
+    ]
+  }
+}
+
 export const nodeOps = {
   insert,
   remove,
-  createElement
+  createElement,
+  setElementText
 }
