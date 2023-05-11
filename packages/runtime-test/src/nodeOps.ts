@@ -166,9 +166,57 @@ function setElementText(el: TestElement, text: string) {
   }
 }
 
+function createText(text: string): TestText {
+  const node: TestText = {
+    id: nodeId++,
+    type: TestNodeTypes.TEXT,
+    text,
+    parentNode: null
+  }
+  logNodeOp({
+    type: NodeOpTypes.CREATE,
+    nodeType: TestNodeTypes.TEXT,
+    targetNode: node,
+    text
+  })
+  // avoid test nodes from being observed
+  markRaw(node)
+  return node
+}
+
+function createComment(text: string): TestComment {
+  const node: TestComment = {
+    id: nodeId++,
+    type: TestNodeTypes.COMMENT,
+    text,
+    parentNode: null
+  }
+  logNodeOp({
+    type: NodeOpTypes.CREATE,
+    nodeType: TestNodeTypes.COMMENT,
+    targetNode: node,
+    text
+  })
+  // avoid test nodes from being observed
+  markRaw(node)
+  return node
+}
+
+function setText(node: TestText, text: string) {
+  logNodeOp({
+    type: NodeOpTypes.SET_TEXT,
+    targetNode: node,
+    text
+  })
+  node.text = text
+}
+
 export const nodeOps = {
   insert,
   remove,
   createElement,
-  setElementText
+  setElementText,
+  createText,
+  setText,
+  createComment
 }

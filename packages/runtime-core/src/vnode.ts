@@ -9,6 +9,7 @@ import {
   normalizeStyle,
   ShapeFlags
 } from '@mini-vue3/shared'
+import { RendererNode } from './renderer'
 
 export type VNodeProps = {
   [key: string]: any
@@ -35,11 +36,15 @@ export const Comment = Symbol.for('v-cmt')
 
 export type VNodeTypes = string | typeof Fragment | typeof Text | typeof Comment
 
-export interface VNode {
+export interface VNode<HostNode = RendererNode> {
   type: VNodeTypes
   props: VNodeProps | null
   children: VNodeNormalizedChildren
   shapeFlag: number
+
+  // DOM
+  el: HostNode | null
+  anchor: HostNode | null
 }
 
 export function isVNode(value: any): value is VNode {
@@ -85,7 +90,9 @@ function createBaseVNode(
     type,
     props,
     children: children as VNodeNormalizedChildren,
-    shapeFlag
+    shapeFlag,
+    el: null,
+    anchor: null
   }
 
   if (children) {
@@ -115,4 +122,8 @@ export function normalizeVNode(child: VNodeChild): VNode {
     // strings and numbers
     return createVNode(Text, null, String(child))
   }
+}
+
+export function isSameVNodeType(n1: VNode, n2: VNode): boolean {
+  return n1.type === n2.type
 }
